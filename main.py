@@ -129,6 +129,35 @@ def collision(player_pos, enemy_pos):
             return True
     return False
 
+def high_score_file():
+    high_score = open('score.txt','r')
+    high_score = int(high_score.read())
+    return high_score
+
+
+def my_high_score(high_score, score):
+    if high_score < score:
+        high_score = open('score.txt', 'w')
+        high_score.write(str(score))
+        high_score.close()
+        high_score = open('score.txt', 'r')
+        high_score = int(high_score.read())
+        return high_score
+    elif high_score >= score:
+        high_score = open('score.txt','r')
+        high_score = int(high_score.read())
+        return high_score
+
+def display_high_score(high_score):
+    hs = "High Score :" + str(high_score)
+    dhs = font_style.render(hs,True,'yellow')
+    display.blit(dhs,(650,10))
+
+try:
+    high_score = high_score_file()
+except:
+    high_score = 0
+
 
 game_over =False
 
@@ -143,10 +172,11 @@ while not game_over:
 
         if event.type == py.KEYDOWN:
             if event.key == py.K_d:
-                y1 = +20
+                y1 = +15
+                player_pos[0] += y1
             elif event.key == py.K_a:
-                y1 = -20
-            player_pos[0] += y1
+                y1 = -15
+                player_pos[0] += y1
 
     display.fill('green')
     my_background()
@@ -157,6 +187,8 @@ while not game_over:
     if collision_check(enemy_list, player_pos):
         game_over = True
     my_score(score)
+    high_score = my_high_score(high_score,score)
+    display_high_score(high_score)
     draw_enemy(enemy_list)
     enemy_speed = level(score, enemy_speed)
     clock.tick(10)
